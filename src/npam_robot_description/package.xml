@@ -2,19 +2,24 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>npam_robot_description</name>
-  <version>0.0.0</version>
-  <description>Descripcion del Robot para NPAM Project</description>
-  <maintainer email="pj.acero@alumnos.upm.es">pedro</maintainer>
-  <license>TODO: License declaration</license>
+  <version>1.0.0</version>
+
+  <description>Paquete descriptivo del robot siguiendo el tutorial de Universal Robots</description>
+
+  <license file="UR_LICENSE.txt">Universal Robots A/S’ Terms and Conditions for Use of Graphical Documentation</license>
+
+  <maintainer email="pj.acero@alumnos.upm.es">Felix Exner</maintainer>
+  <author email="durchdewald@fzi.de">Felix Durchdewald</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>ur_description</exec_depend>
+  <exec_depend>ur_robot_driver</exec_depend>
 
-  <depend>xacro</depend>
-  <depend>urdf</depend>
-  <depend>rviz2</depend>
-
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
