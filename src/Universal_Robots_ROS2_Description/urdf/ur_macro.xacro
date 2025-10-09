@@ -437,6 +437,44 @@
       <origin xyz="0 0 0" rpy="${pi} 0 0"/>
     </joint>
 
+    <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+
+    <link name="mesa">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
+        <geometry>
+          <mesh filename="file://$(find ur_description)/meshes/Escenas/estacion_sobredimensionada.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="GreyMetallic">
+          <color rgba="0.7 0.7 0.7 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
+        <geometry>
+          <mesh filename="file://$(find ur_description)/meshes/Escenas/estacion_sobredimensionada.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+    <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+
+    </link>
+        <joint name="plataforma" type="fixed">
+      <parent link="${tf_prefix}base_link" />
+      <child link="mesa" />
+      <origin xyz="0.76884 -0.27794 -0.16726" rpy="-0.0054 -0.0053 0.0116"/> 
+      <axis xyz="0 0 1" />
+    </joint>
+
+    <!-- <joint name="cama_impresion" type="fixed">
+      <parent link="${tf_prefix}wrist_3_link" />
+      <child link="cama_impresion" />
+      <origin xyz="0 0 0.25" rpy="0 ${-pi/2} ${-pi/2-0.1}" />
+      <axis xyz="0 0 1" />
+    </joint>
+     -->
+    <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+
     <!-- ROS-Industrial 'base' frame - base_link to UR 'Base' Coordinates transform -->
     <link name="${tf_prefix}base"/>
     <joint name="${tf_prefix}base_link-base_fixed_joint" type="fixed">
