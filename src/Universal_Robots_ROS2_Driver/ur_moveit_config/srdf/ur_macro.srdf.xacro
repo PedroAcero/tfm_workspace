@@ -38,7 +38,30 @@
       <joint name="${prefix}wrist_2_joint" value="-1.6" />
       <joint name="${prefix}wrist_3_joint" value="-0.11" />
     </group_state>
+
+    <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+    <group_state name="puntoA" group="${prefix}${name}_manipulator">
+      <joint name="${prefix}elbow_joint" value="0.889" />
+      <joint name="${prefix}shoulder_lift_joint" value="-0.497" />
+      <joint name="${prefix}shoulder_pan_joint" value="-2.089" />
+      <joint name="${prefix}wrist_1_joint" value="-0.364" />
+      <joint name="${prefix}wrist_2_joint" value="0.962" />
+      <joint name="${prefix}wrist_3_joint" value="1.558" />
+    </group_state>
+    <group_state name="puntoB" group="${prefix}${name}_manipulator">
+      <joint name="${prefix}elbow_joint" value="0.663" />
+      <joint name="${prefix}shoulder_lift_joint" value="-0.962" />
+      <joint name="${prefix}shoulder_pan_joint" value="-2.155" />
+      <joint name="${prefix}wrist_1_joint" value="-0.033" />
+      <joint name="${prefix}wrist_2_joint" value="1.624" />
+      <joint name="${prefix}wrist_3_joint" value="1.558" />
+    </group_state>
+    <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+
     <!--END EFFECTOR - Purpose - Represent information about an end effector.-->
+    <end_effector name="${prefix}cama_effector" parent_link="${prefix}tool0" group="${prefix}${name}_manipulator">
+      <component name="cama_component" link="${prefix}cama_impresion" />
+    </end_effector>
     <!--VIRTUAL JOINT - Purpose - this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <!--DISABLE COLLISIONS - By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="${prefix}base_link" link2="${prefix}base_link_inertia" reason="Adjacent" />
@@ -53,5 +76,10 @@
     <disable_collisions link1="${prefix}wrist_1_link" link2="${prefix}wrist_3_link" reason="Never" />
     <disable_collisions link1="${prefix}wrist_2_link" link2="${prefix}wrist_3_link" reason="Adjacent" />
 
-  </xacro:macro>
+    <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+    <disable_collisions link1="${prefix}cama_impresion" link2="${prefix}wrist_3_link" reason="Adjacent" />
+    <disable_collisions link1="${prefix}cama_impresion" link2="${prefix}wrist_2_link" reason="Never" />
+    <disable_collisions link1="${prefix}cama_impresion" link2="${prefix}wrist_1_link" reason="Never" />
+    <disable_collisions link1="${prefix}mesa" link2="${prefix}base_link" reason="Adjacent" />
+      </xacro:macro>
 </robot>

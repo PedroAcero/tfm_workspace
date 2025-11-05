@@ -92,7 +92,8 @@
     script_command_port:=50004
     trajectory_port:=50003
     non_blocking_read:=true
-    keep_alive_count:=2"
+    keep_alive_count:=2
+    pruebas:=false"
 
     >
 
@@ -455,24 +456,41 @@
           <mesh filename="file://$(find ur_description)/meshes/Escenas/estacion_sobredimensionada.stl" scale="0.001 0.001 0.001"/>
         </geometry>
       </collision>
+    </link>
+
+    <link name="${tf_prefix}cama_impresion">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 ${-pi/2} 0 "/>
+        <geometry>
+          <mesh filename="file://$(find ur_description)/meshes/Escenas/Camas/cama_impresion.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="White">
+        <color rgba="1 1 1 1.0"/>
+      </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 ${-pi/2} 0"/>
+        <geometry>
+          <mesh filename="file://$(find ur_description)/meshes/Escenas/Camas/cama_impresion.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${wrist_3_mass}"/>
+        <inertia ixx="0.00079" ixy="0.0" ixz="0.0" iyy="0.00079" iyz="0.0" izz="0.00034"/>
+      </inertial>
+    </link>
 
     <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
 
-    </link>
-        <joint name="plataforma" type="fixed">
+
+    <joint name="plataforma" type="fixed">
       <parent link="${tf_prefix}base_link" />
       <child link="mesa" />
       <origin xyz="0.76884 -0.27794 -0.16726" rpy="-0.0054 -0.0053 0.0116"/> 
       <axis xyz="0 0 1" />
     </joint>
-
-    <!-- <joint name="cama_impresion" type="fixed">
-      <parent link="${tf_prefix}wrist_3_link" />
-      <child link="cama_impresion" />
-      <origin xyz="0 0 0.25" rpy="0 ${-pi/2} ${-pi/2-0.1}" />
-      <axis xyz="0 0 1" />
-    </joint>
-     -->
+    
     <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
 
     <!-- ROS-Industrial 'base' frame - base_link to UR 'Base' Coordinates transform -->
@@ -504,6 +522,41 @@
       <parent link="${tf_prefix}flange"/>
       <child link="${tf_prefix}tool0"/>
     </joint>
+
+  <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+
+    <joint name="${tf_prefix}ft_to_cama_impresion_joint" type="fixed">
+      <parent link="${tf_prefix}tool0" />
+      <child link="${tf_prefix}cama_impresion" />
+      <origin xyz="0 0 0.167" rpy="0 0 0" />
+      <axis xyz="0 0 1" />
+    </joint>
+
+  <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+
+    <!-- <link name="barrier_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="3 0.005 0.5" />
+        </geometry>
+        <material name="BarrierColor">
+          <color rgba="1.0 1.0 0.0 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="3 0.005 0.5" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="barrier_joint" type="fixed">
+      <parent link="${tf_prefix}base_link"/>
+      <child link="barrier_link"/>
+      <origin xyz="0 -1.15 0.5" rpy="0 0 0"/>
+    </joint> -->
 
   </xacro:macro>
 </robot>
