@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 
   // Dar tiempo a que /move_group esté completamente listo
   RCLCPP_INFO(logger, "Esperando a que /move_group esté listo...");
-  rclcpp::sleep_for(2s);
+  rclcpp::sleep_for(1s);
 
   // Comunicación de MoveGroupInterface con /move_group
   static const std::string PLANNING_GROUP = "ur_manipulator";
