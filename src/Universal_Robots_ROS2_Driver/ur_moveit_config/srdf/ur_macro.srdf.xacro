@@ -13,6 +13,11 @@
     <group name="${prefix}${name}_manipulator">
       <chain base_link="${prefix}base_link" tip_link="${prefix}tool0" />
     </group>
+
+    <group name="${prefix}${name}_manipulator_con_cama">
+      <chain base_link="${prefix}base_link" tip_link="cama_impresion" />
+    </group>
+
     <!--GROUP STATES - Purpose - Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="${prefix}home" group="${prefix}${name}_manipulator">
       <joint name="${prefix}elbow_joint" value="0" />
@@ -58,11 +63,19 @@
     </group_state>
     <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
 
-    <!--END EFFECTOR - Purpose - Represent information about an end effector.-->
-    <end_effector name="${prefix}cama_effector" parent_link="${prefix}tool0" group="${prefix}${name}_manipulator">
-      <component name="cama_component" link="${prefix}cama_impresion" />
-    </end_effector>
-    <!--VIRTUAL JOINT - Purpose - this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <!--VIRTUAL JOINT - Conecta el robot al frame "world"-->
+    <virtual_joint name="${prefix}virtual_joint" type="fixed" parent_frame="world" child_link="${prefix}base_link"/>
+
+    <!--END EFFECTOR GROUP - Grupo que contiene solo el end-effector-->
+    <!-- <end_effector
+    name="${prefix}cama_effector"
+    parent_link="${prefix}tool0"
+    group="${prefix}cama_effector_group"
+    parent_group="${prefix}${name}_manipulator_con_cama"/> -->
+
+    <!--END EFFECTOR - La cama de impresión como herramienta del robot-->
+    <!-- <end_effector name="${prefix}cama_effector" parent_link="${prefix}tool0" group="${prefix}cama_effector_group" parent_group="${prefix}${name}_manipulator" /> -->
+
     <!--DISABLE COLLISIONS - By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="${prefix}base_link" link2="${prefix}base_link_inertia" reason="Adjacent" />
     <disable_collisions link1="${prefix}base_link_inertia" link2="${prefix}shoulder_link" reason="Adjacent" />
@@ -77,9 +90,13 @@
     <disable_collisions link1="${prefix}wrist_2_link" link2="${prefix}wrist_3_link" reason="Adjacent" />
 
     <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
-    <disable_collisions link1="${prefix}cama_impresion" link2="${prefix}wrist_3_link" reason="Adjacent" />
-    <disable_collisions link1="${prefix}cama_impresion" link2="${prefix}wrist_2_link" reason="Never" />
-    <disable_collisions link1="${prefix}cama_impresion" link2="${prefix}wrist_1_link" reason="Never" />
-    <disable_collisions link1="${prefix}mesa" link2="${prefix}base_link" reason="Adjacent" />
-      </xacro:macro>
+    <disable_collisions link1="cama_impresion" link2="${prefix}tool0" reason="Adjacent" />
+    <disable_collisions link1="cama_impresion" link2="${prefix}wrist_3_link" reason="Never" />
+    <disable_collisions link1="cama_impresion" link2="${prefix}wrist_2_link" reason="Never" />
+    <disable_collisions link1="cama_impresion" link2="${prefix}wrist_1_link" reason="Never" />
+    <disable_collisions link1="mesa" link2="${prefix}base_link" reason="Adjacent" />
+    <disable_collisions link1="mesa" link2="${prefix}base_link_inertia" reason="Never" />
+    <disable_collisions link1="mesa" link2="${prefix}shoulder_link" reason="Default" />
+
+    </xacro:macro>
 </robot>
