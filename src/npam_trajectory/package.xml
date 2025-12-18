@@ -2,7 +2,7 @@
 <package format="3">
   <name>npam_trajectory</name>
   <version>0.0.1</version>
-  <description>Paquete de planificación de trayectorias articulares con MoveIt</description>
+  <description>Paquete de planificación de trayectorias articulares y cartesianas con MoveIt</description>
 
   <maintainer email="pj.acero@alumnos.upm.es">Pedro Acero</maintainer>
   <license>Apache-2.0</license>
@@ -13,7 +13,6 @@
   <!-- Build dependencies -->
   <build_depend>rclcpp</build_depend>
   <build_depend>geometry_msgs</build_depend>
-
   <build_depend>boost</build_depend>
 
   <!-- MoveIt2 -->
@@ -27,9 +26,7 @@
   <!-- Execution dependencies -->
   <exec_depend>rclcpp</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
-
   <exec_depend>boost</exec_depend>
-
   <exec_depend>moveit_ros_planning_interface</exec_depend>
   <exec_depend>moveit_ros_planning</exec_depend>
   <exec_depend>moveit_msgs</exec_depend>
