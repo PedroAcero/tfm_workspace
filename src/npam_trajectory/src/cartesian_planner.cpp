@@ -93,7 +93,7 @@ bool parseG1Line(const std::string &line, geometry_msgs::msg::Pose &pose) {
 
 std::vector<geometry_msgs::msg::Pose> gcode_reader(const std::string &filename,
                                                    rclcpp::Logger logger) {
-
+  // Funcion para la lectura del G-Code
   std::vector<geometry_msgs::msg::Pose> waypoints;
 
   std::ifstream file(filename);
@@ -143,6 +143,44 @@ std::vector<geometry_msgs::msg::Pose> gcode_reader(const std::string &filename,
   return waypoints;
 }
 
+bool applyTimeParameterization(robot_trajectory::RobotTrajectory &robot_traj,
+                               double velocity_scaling,
+                               double acceleration_scaling,
+                               rclcpp::Logger logger) {
+  /**
+   * Aplica parametrización temporal a una trayectoria usando el algoritmo
+   * Iterative Parabolic Time Parameterization (IPTP).
+   *
+   * Este algoritmo calcula las velocidades, aceleraciones y tiempos para cada
+   * punto de la trayectoria, respetando los límites configurados.
+   *
+   */
+
+  RCLCPP_INFO(logger, "Aplicando parametrización temporal...");
+  RCLCPP_INFO(logger, "  - Escalado de velocidad: %.0f%%",
+              velocity_scaling * 100);
+  RCLCPP_INFO(logger, "  - Escalado de aceleración: %.0f%%",
+              acceleration_scaling * 100);
+
+  trajectory_processing::IterativeParabolicTimeParameterization iptp;
+  bool success = iptp.computeTimeStamps(robot_traj, velocity_scaling,
+                                        acceleration_scaling);
+
+  if (success) {
+    RCLCPP_INFO(logger, "Parametrización temporal: COMPLETADA");
+
+    // Mostrar duración total de la trayectoria
+    double total_duration = robot_traj.getDuration();
+    RCLCPP_INFO(logger, "  - Duración total: %.2f segundos", total_duration);
+    RCLCPP_INFO(logger, "  - Número de waypoints: %zu",
+                robot_traj.getWayPointCount());
+  } else {
+    RCLCPP_ERROR(logger, "Parametrización temporal: FALLADA");
+  }
+
+  return success;
+}
+
 int main(int argc, char *argv[]) {
   // Inicializar ROS2 y nodo
   rclcpp::init(argc, argv);
@@ -150,6 +188,65 @@ int main(int argc, char *argv[]) {
   auto node = rclcpp::Node::make_shared("npam_cartesian_planner");
   auto logger = node->get_logger();
   RCLCPP_INFO(logger, "Nodo de NPAM iniciado!");
+
+  // Declarar parámetros con valores por defecto
+  node->declare_parameter("velocity_scaling", 1.0);
+  node->declare_parameter("acceleration_scaling", 1.0);
+  node->declare_parameter(
+      "gcode_directory",
+      "/home/pedro/workspace/src/npam_trajectory/trayectorias/");
+  node->declare_parameter("gcode_filename",
+                          "short_generated_gcode_medio_estrella_poses.gcode");
+
+  // Obtener valores de los parámetros
+  double velocity_scaling = node->get_parameter("velocity_scaling").as_double();
+  double acceleration_scaling =
+      node->get_parameter("acceleration_scaling").as_double();
+  std::string gcode_directory =
+      node->get_parameter("gcode_directory").as_string();
+  std::string gcode_filename =
+      node->get_parameter("gcode_filename").as_string();
+
+  // Construir ruta completa del archivo G-code
+  std::string gcode_path = gcode_directory + gcode_filename;
+
+  // Validar parámetros
+  if (velocity_scaling <= 0.0 || velocity_scaling > 1.0) {
+    RCLCPP_ERROR(logger,
+                 "velocity_scaling debe estar entre 0.0 y 1.0 (valor: %.2f)",
+                 velocity_scaling);
+    rclcpp::shutdown();
+    return 1;
+  }
+
+  if (acceleration_scaling <= 0.0 || acceleration_scaling > 1.0) {
+    RCLCPP_ERROR(
+        logger, "acceleration_scaling debe estar entre 0.0 y 1.0 (valor: %.2f)",
+        acceleration_scaling);
+    rclcpp::shutdown();
+    return 1;
+  }
+
+  RCLCPP_INFO(logger, "Parámetros cargados:");
+  RCLCPP_INFO(logger, "  - velocity_scaling: %.2f (%.0f%%)", velocity_scaling,
+              velocity_scaling * 100);
+  RCLCPP_INFO(logger, "  - acceleration_scaling: %.2f (%.0f%%)",
+              acceleration_scaling, acceleration_scaling * 100);
+  RCLCPP_INFO(logger, "  - gcode_path: %s", gcode_path.c_str());
+
+  // Verificar que el archivo existe antes de continuar
+  std::ifstream test_file(gcode_path);
+  if (!test_file.good()) {
+    RCLCPP_ERROR(logger, "El archivo G-code no existe o no es accesible:");
+    RCLCPP_ERROR(logger, "  Ruta: %s", gcode_path.c_str());
+    RCLCPP_ERROR(logger, "  Directorio: %s", gcode_directory.c_str());
+    RCLCPP_ERROR(logger, "  Archivo: %s", gcode_filename.c_str());
+    RCLCPP_ERROR(logger,
+                 "Verifica que la ruta sea correcta y que el archivo exista.");
+    rclcpp::shutdown();
+    return 1;
+  }
+  test_file.close();
 
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
@@ -178,11 +275,11 @@ int main(int argc, char *argv[]) {
   move_group.setStartStateToCurrentState();
   RCLCPP_INFO(logger, "Estado inicial configurado al estado actual");
 
-  // Definir los waypoints que generan la trayectoria
-  std::string gcode_path =
-      "/home/pedro/workspace/src/npam_trajectory/trayectorias/"
-      "short_generated_gcode_medio_estrella_poses.gcode";
+  // Configurar escalados de velocidades y aceleraciones en MoveGroup
+  move_group.setMaxVelocityScalingFactor(velocity_scaling);
+  move_group.setMaxAccelerationScalingFactor(acceleration_scaling);
 
+  // Leer waypoints desde G-code
   RCLCPP_INFO(logger, "Leyendo waypoints desde G-code...");
   std::vector<geometry_msgs::msg::Pose> waypoints =
       gcode_reader(gcode_path, logger);
@@ -217,7 +314,7 @@ int main(int argc, char *argv[]) {
   RCLCPP_INFO(logger, "Calculando trayectoria cartesiana...");
 
   moveit_msgs::msg::RobotTrajectory trajectory_msg;
-  const double eef_step = 0.01;      // Resolución: 1cm
+  const double eef_step = 0.01;      // Resolución: 1cm entre waypoints
   const double jump_threshold = 0.0; // Deshabilitar detección de saltos
 
   double fraction = move_group.computeCartesianPath(
@@ -233,22 +330,19 @@ int main(int argc, char *argv[]) {
                 fraction * 100.0);
   }
 
-  // Añadir parametrización temporal (velocidades y aceleraciones)
-  RCLCPP_INFO(logger, "Añadiendo parametrización temporal...");
-
+  // Convertir mensaje a RobotTrajectory para parametrización
   robot_trajectory::RobotTrajectory robot_traj(move_group.getRobotModel(),
                                                PLANNING_GROUP);
 
   robot_traj.setRobotTrajectoryMsg(*move_group.getCurrentState(),
                                    trajectory_msg);
 
-  trajectory_processing::IterativeParabolicTimeParameterization iptp;
-  bool success = iptp.computeTimeStamps(robot_traj);
+  // Aplicar parametrización temporal (función externa)
+  bool time_param_success = applyTimeParameterization(
+      robot_traj, velocity_scaling, acceleration_scaling, logger);
 
-  if (success) {
-    RCLCPP_INFO(logger, "Parametrización temporal: BIEN");
-  } else {
-    RCLCPP_ERROR(logger, "Parametrización temporal: MAL");
+  if (!time_param_success) {
+    RCLCPP_ERROR(logger, "Error en la parametrización temporal. Abortando.");
     rclcpp::shutdown();
     spinner.join();
     return 1;
