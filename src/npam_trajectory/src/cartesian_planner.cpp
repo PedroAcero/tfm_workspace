@@ -182,7 +182,9 @@ bool applyTimeParameterization(robot_trajectory::RobotTrajectory &robot_traj,
 }
 
 int main(int argc, char *argv[]) {
-  // Inicializar ROS2 y nodo
+  // ============================================================
+  // INICIALIZAR ROS Y EL NODO "NPAM_CARTESIAN_PLANNER"
+  // ============================================================
   rclcpp::init(argc, argv);
 
   auto node = rclcpp::Node::make_shared("npam_cartesian_planner");
@@ -207,7 +209,6 @@ int main(int argc, char *argv[]) {
   std::string gcode_filename =
       node->get_parameter("gcode_filename").as_string();
 
-  // Construir ruta completa del archivo G-code
   std::string gcode_path = gcode_directory + gcode_filename;
 
   // Validar parámetros
@@ -252,7 +253,13 @@ int main(int argc, char *argv[]) {
   executor.add_node(node);
   std::thread spinner([&executor]() { executor.spin(); });
 
-  // Dar tiempo a que /move_group esté completamente listo
+  // ============================================================
+  // COMUNICACIÓN CON MOVE_GROUP A TRAVÉS DE MOVE GROUP INTERFACE
+  // Esperar a que se establezcan las variables de entorno
+  // Declarar planning_group (definido en el srdf)
+  // Declarar end_effector
+  // Establecer variables de planificación
+  // ============================================================
   RCLCPP_INFO(logger, "Esperando a que /move_group esté listo...");
   rclcpp::sleep_for(1s);
 
@@ -279,7 +286,9 @@ int main(int argc, char *argv[]) {
   move_group.setMaxVelocityScalingFactor(velocity_scaling);
   move_group.setMaxAccelerationScalingFactor(acceleration_scaling);
 
-  // Leer waypoints desde G-code
+  // ============================================================
+  // EXTRAER PUNTOS DEL G-CODE, Y VALIDARLOS
+  // ============================================================
   RCLCPP_INFO(logger, "Leyendo waypoints desde G-code...");
   std::vector<geometry_msgs::msg::Pose> waypoints =
       gcode_reader(gcode_path, logger);
@@ -310,7 +319,9 @@ int main(int argc, char *argv[]) {
                 waypoints.size());
   }
 
-  // Planificación de trayectoria geométrica
+  // ============================================================
+  // PLANIFICACIÓN DE LA TRAYECTORIA GEOMÉTRICA "trajectory_msg"
+  // ============================================================
   RCLCPP_INFO(logger, "Calculando trayectoria cartesiana...");
 
   moveit_msgs::msg::RobotTrajectory trajectory_msg;
@@ -330,14 +341,16 @@ int main(int argc, char *argv[]) {
                 fraction * 100.0);
   }
 
-  // Convertir mensaje a RobotTrajectory para parametrización
+  // ============================================================
+  // AÑADIR PLANIFICACIÓN TEMPORAL
+  // robot_traj = trajectory_msg (geom) + tiempos
+  // ============================================================
   robot_trajectory::RobotTrajectory robot_traj(move_group.getRobotModel(),
                                                PLANNING_GROUP);
 
   robot_traj.setRobotTrajectoryMsg(*move_group.getCurrentState(),
                                    trajectory_msg);
 
-  // Aplicar parametrización temporal (función externa)
   bool time_param_success = applyTimeParameterization(
       robot_traj, velocity_scaling, acceleration_scaling, logger);
 
@@ -360,9 +373,14 @@ int main(int argc, char *argv[]) {
     RCLCPP_WARN(logger, "La trayectoria sigue sin velocidades");
   }
 
-  // Crear plan y ejecutar
+  // ============================================================
+  // PLAN & EXCECUTE
+  // ============================================================
   moveit::planning_interface::MoveGroupInterface::Plan plan;
   plan.trajectory_ = trajectory_msg;
+
+  RCLCPP_INFO(logger, "Pausa para capturar datos...");
+  rclcpp::sleep_for(10s);
 
   RCLCPP_INFO(logger, "Ejecutando trayectoria cartesiana...");
 
@@ -375,7 +393,9 @@ int main(int argc, char *argv[]) {
                  exec_result.val);
   }
 
-  // Cleanup
+  // ============================================================
+  // CLEANUP
+  // ============================================================
   RCLCPP_INFO(logger, "Finalizando...");
   rclcpp::shutdown();
   spinner.join();

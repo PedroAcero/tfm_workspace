@@ -42,14 +42,14 @@ def generate_launch_description():
     # Argumento: velocity_scaling (0.0 - 1.0)
     velocity_scaling_arg = DeclareLaunchArgument(
         'velocity_scaling',
-        default_value='0.1',
+        default_value='1.0',
         description='Factor de escalado de velocidad (0.0-1.0). 0.1 = 10% de velocidad máxima'
     )
 
     # Argumento: acceleration_scaling (0.0 - 1.0)
     acceleration_scaling_arg = DeclareLaunchArgument(
         'acceleration_scaling',
-        default_value='0.1',
+        default_value='1.0',
         description='Factor de escalado de aceleración (0.0-1.0). 0.1 = 10% de aceleración máxima'
     )
 
