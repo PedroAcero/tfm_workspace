@@ -16,6 +16,7 @@ find_package(std_msgs REQUIRED)
 
 # Add executable for plan_logger
 add_executable(plan_logger src/plan_logger.cpp)
+add_executable(commanded_logger src/commanded_logger.cpp)
 
 ament_target_dependencies(plan_logger
   rclcpp
@@ -24,9 +25,17 @@ ament_target_dependencies(plan_logger
   std_msgs
 )
 
+ament_target_dependencies(commanded_logger
+  rclcpp
+  control_msgs
+  trajectory_msgs
+  std_msgs
+)
+
 # Install targets
 install(TARGETS
   plan_logger
+  commanded_logger
   DESTINATION lib/${PROJECT_NAME}
 )
 
