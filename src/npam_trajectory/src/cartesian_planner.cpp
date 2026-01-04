@@ -157,9 +157,9 @@ bool applyTimeParameterization(robot_trajectory::RobotTrajectory &robot_traj,
    */
 
   RCLCPP_INFO(logger, "Aplicando parametrización temporal...");
-  RCLCPP_INFO(logger, "  - Escalado de velocidad: %.0f%%",
+  RCLCPP_INFO(logger, " --> Escalado de velocidad: %.0f%%",
               velocity_scaling * 100);
-  RCLCPP_INFO(logger, "  - Escalado de aceleración: %.0f%%",
+  RCLCPP_INFO(logger, "  --> Escalado de aceleración: %.0f%%",
               acceleration_scaling * 100);
 
   trajectory_processing::IterativeParabolicTimeParameterization iptp;
@@ -229,11 +229,11 @@ int main(int argc, char *argv[]) {
   }
 
   RCLCPP_INFO(logger, "Parámetros cargados:");
-  RCLCPP_INFO(logger, "  - velocity_scaling: %.2f (%.0f%%)", velocity_scaling,
+  RCLCPP_INFO(logger, "  --> velocity_scaling: %.2f (%.0f%%)", velocity_scaling,
               velocity_scaling * 100);
-  RCLCPP_INFO(logger, "  - acceleration_scaling: %.2f (%.0f%%)",
+  RCLCPP_INFO(logger, "  --> acceleration_scaling: %.2f (%.0f%%)",
               acceleration_scaling, acceleration_scaling * 100);
-  RCLCPP_INFO(logger, "  - gcode_path: %s", gcode_path.c_str());
+  RCLCPP_INFO(logger, "  --> gcode_path: %s", gcode_path.c_str());
 
   // Verificar que el archivo existe antes de continuar
   std::ifstream test_file(gcode_path);
@@ -283,8 +283,8 @@ int main(int argc, char *argv[]) {
   RCLCPP_INFO(logger, "Estado inicial configurado al estado actual");
 
   // Configurar escalados de velocidades y aceleraciones en MoveGroup
-  move_group.setMaxVelocityScalingFactor(velocity_scaling);
-  move_group.setMaxAccelerationScalingFactor(acceleration_scaling);
+  // move_group.setMaxVelocityScalingFactor(velocity_scaling);
+  // move_group.setMaxAccelerationScalingFactor(acceleration_scaling);
 
   // ============================================================
   // EXTRAER PUNTOS DEL G-CODE, Y VALIDARLOS
@@ -379,7 +379,7 @@ int main(int argc, char *argv[]) {
   moveit::planning_interface::MoveGroupInterface::Plan plan;
   plan.trajectory_ = trajectory_msg;
 
-  RCLCPP_INFO(logger, "Pausa para capturar datos...");
+  RCLCPP_INFO(logger, "Previsualizando, en 10s se ejecutará la trayectoria...");
   rclcpp::sleep_for(10s);
 
   RCLCPP_INFO(logger, "Ejecutando trayectoria cartesiana...");
