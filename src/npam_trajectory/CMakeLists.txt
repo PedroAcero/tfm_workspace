@@ -9,7 +9,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(shape_msgs REQUIRED)
 
 # MoveIt2
 find_package(moveit_ros_planning_interface REQUIRED)
@@ -60,12 +62,33 @@ target_link_libraries(cartesian_planner
 )
 
 # ============================================
+# EJECUTABLE 3: pilz_planner
+# ============================================
+add_executable(pilz_planner src/pilz_planner.cpp)
+ament_target_dependencies(pilz_planner
+  rclcpp
+  rclcpp_action
+  geometry_msgs
+  shape_msgs
+  moveit_ros_planning_interface
+  moveit_msgs
+  moveit_core
+  moveit_kinematics
+)
+target_link_libraries(pilz_planner
+  Boost::system
+  Boost::filesystem
+)
+
+
+# ============================================
 # INSTALACIÓN
 # ============================================
 
 install(TARGETS
   joint_planner
   cartesian_planner
+  pilz_planner
   DESTINATION lib/${PROJECT_NAME}
 )
 
