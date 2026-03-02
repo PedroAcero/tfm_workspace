@@ -56,7 +56,8 @@ def generate_launch_description():
     # Argumento: gcode_directory
     gcode_directory_arg = DeclareLaunchArgument(
         'gcode_directory',
-        default_value='/home/pedro/workspace/src/npam_trajectory/trayectorias/',
+        default_value=os.environ['HOME'] +
+        '/workspace/src/npam_trajectory/trayectorias/',
         description='Directorio donde se encuentran los archivos G-code'
     )
 

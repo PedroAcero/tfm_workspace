@@ -194,9 +194,9 @@ int main(int argc, char *argv[]) {
   // Declarar parámetros con valores por defecto
   node->declare_parameter("velocity_scaling", 1.0);
   node->declare_parameter("acceleration_scaling", 1.0);
-  node->declare_parameter(
-      "gcode_directory",
-      "/home/pedro/workspace/src/npam_trajectory/trayectorias/");
+  node->declare_parameter("gcode_directory",
+                          std::string(std::getenv("HOME")) +
+                              "/workspace/src/npam_trajectory/trayectorias/");
   node->declare_parameter("gcode_filename",
                           "short_generated_gcode_medio_estrella_poses.gcode");
 
@@ -283,8 +283,8 @@ int main(int argc, char *argv[]) {
   RCLCPP_INFO(logger, "Estado inicial configurado al estado actual");
 
   // Configurar escalados de velocidades y aceleraciones en MoveGroup
-  // move_group.setMaxVelocityScalingFactor(velocity_scaling);
-  // move_group.setMaxAccelerationScalingFactor(acceleration_scaling);
+  move_group.setMaxVelocityScalingFactor(velocity_scaling);
+  move_group.setMaxAccelerationScalingFactor(acceleration_scaling);
 
   // ============================================================
   // EXTRAER PUNTOS DEL G-CODE, Y VALIDARLOS
@@ -303,21 +303,22 @@ int main(int argc, char *argv[]) {
   RCLCPP_INFO(logger, "Waypoints leídos: %zu puntos", waypoints.size());
 
   // Mostrar solo los primeros 5 waypoints para verificar
-  int show_count = std::min(5, static_cast<int>(waypoints.size()));
-  for (int i = 0; i < show_count; i++) {
-    RCLCPP_INFO(
-        logger,
-        "Waypoint %d: pos[%.4f, %.4f, %.4f] orient[%.4f, %.4f, %.4f, %.4f]", i,
-        waypoints[i].position.x, waypoints[i].position.y,
-        waypoints[i].position.z, waypoints[i].orientation.x,
-        waypoints[i].orientation.y, waypoints[i].orientation.z,
-        waypoints[i].orientation.w);
-  }
+  // int show_count = std::min(5, static_cast<int>(waypoints.size()));
+  // for (int i = 0; i < show_count; i++) {
+  //   RCLCPP_INFO(
+  //       logger,
+  //       "Waypoint %d: pos[%.4f, %.4f, %.4f] orient[%.4f, %.4f, %.4f, %.4f]",
+  //       i, waypoints[i].position.x, waypoints[i].position.y,
+  //       waypoints[i].position.z, waypoints[i].orientation.x,
+  //       waypoints[i].orientation.y, waypoints[i].orientation.z,
+  //       waypoints[i].orientation.w);
+  // }
 
-  if (waypoints.size() > 5) {
-    RCLCPP_INFO(logger, "... (mostrando solo los primeros 5 de %zu waypoints)",
-                waypoints.size());
-  }
+  // if (waypoints.size() > 5) {
+  //   RCLCPP_INFO(logger, "... (mostrando solo los primeros 5 de %zu
+  //   waypoints)",
+  //               waypoints.size());
+  // }
 
   // ============================================================
   // PLANIFICACIÓN DE LA TRAYECTORIA GEOMÉTRICA "trajectory_msg"
