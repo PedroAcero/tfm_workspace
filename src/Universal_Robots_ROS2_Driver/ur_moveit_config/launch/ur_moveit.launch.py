@@ -189,7 +189,7 @@ def launch_setup(context, *args, **kwargs):
 
     # Añadir algoritmo PILZ
     pilz_planning_pipeline_config = {
-        "move_group": {
+        "pilz_industrial_motion_planner": {
             "planning_plugin": "pilz_industrial_motion_planner/CommandPlanner",
             "request_adapters": "",
             "default_planner_config": "LIN",
@@ -198,7 +198,15 @@ def launch_setup(context, *args, **kwargs):
 
     pilz_planning_yaml = load_yaml(
         "ur_moveit_config", "config/pilz_industrial_motion_planning.yaml")
-    pilz_planning_pipeline_config["move_group"].update(pilz_planning_yaml)
+    pilz_planning_pipeline_config["pilz_industrial_motion_planner"].update(
+        pilz_planning_yaml)
+
+    pilz_cartesian_limits = {
+        "robot_description_planning": load_yaml(
+            "ur_moveit_config", "config/pilz_cartesian_limits.yaml"
+        )["robot_description_planning"]
+    }
+
     ##################################
 
     # Trajectory Execution Configuration
@@ -247,7 +255,12 @@ def launch_setup(context, *args, **kwargs):
             robot_description_kinematics,
             robot_description_planning,
             ompl_planning_pipeline_config,
-            # pilz_planning_pipeline_config,
+            pilz_planning_pipeline_config,
+            pilz_cartesian_limits,
+            {
+                "planning_pipelines": ["move_group", "pilz_industrial_motion_planner"],
+                "default_planning_pipeline": "move_group",
+            },
             {
                 "capabilities": (
                     "pilz_industrial_motion_planner/MoveGroupSequenceAction "
