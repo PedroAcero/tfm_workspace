@@ -187,6 +187,20 @@ def launch_setup(context, *args, **kwargs):
         "ur_moveit_config", "config/ompl_planning.yaml")
     ompl_planning_pipeline_config["move_group"].update(ompl_planning_yaml)
 
+    # Añadir algoritmo PILZ
+    pilz_planning_pipeline_config = {
+        "move_group": {
+            "planning_plugin": "pilz_industrial_motion_planner/CommandPlanner",
+            "request_adapters": "",
+            "default_planner_config": "LIN",
+        }
+    }
+
+    pilz_planning_yaml = load_yaml(
+        "ur_moveit_config", "config/pilz_industrial_motion_planning.yaml")
+    pilz_planning_pipeline_config["move_group"].update(pilz_planning_yaml)
+    ##################################
+
     # Trajectory Execution Configuration
     controllers_yaml = load_yaml("ur_moveit_config", "config/controllers.yaml")
     # the scaled_joint_trajectory_controller does not work on fake hardware
@@ -233,6 +247,13 @@ def launch_setup(context, *args, **kwargs):
             robot_description_kinematics,
             robot_description_planning,
             ompl_planning_pipeline_config,
+            # pilz_planning_pipeline_config,
+            {
+                "capabilities": (
+                    "pilz_industrial_motion_planner/MoveGroupSequenceAction "
+                    "pilz_industrial_motion_planner/MoveGroupSequenceService"
+                )
+            },
             trajectory_execution,
             moveit_controllers,
             planning_scene_monitor_parameters,
@@ -256,6 +277,13 @@ def launch_setup(context, *args, **kwargs):
             robot_description,
             robot_description_semantic,
             ompl_planning_pipeline_config,
+            # pilz_planning_pipeline_config,
+            {
+                "capabilities": (
+                    "pilz_industrial_motion_planner/MoveGroupSequenceAction "
+                    "pilz_industrial_motion_planner/MoveGroupSequenceService"
+                )
+            },
             robot_description_kinematics,
             robot_description_planning,
             warehouse_ros_config,
