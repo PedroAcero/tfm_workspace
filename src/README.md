@@ -3,4 +3,4 @@ Explicación breve del repo
 
 ## ÍNDICE PROVISIONAL
 
-* Instalación 
+* [Guía de instalación](docs/instalacion.md)  
