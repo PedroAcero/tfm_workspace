@@ -5,4 +5,4 @@ Explicación breve del repo
 
 * [Guía de instalación](docs/instalacion.md)  
 * [Pruebas](docs/pruebas.md)
-* [Control del _Teach Pendant_](docs/dashboard)
+* [Control del _Teach Pendant_](docs/dashboard.md)
