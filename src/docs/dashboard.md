@@ -1,7 +1,16 @@
 # Prueba de Control del _Teach Pendant_ con ROS2
  
-Este documento es una guía de planificación para establecer conexión con el ur10 real y validar el control externo, mensajes, freedrive y diagnóstico de estado.
+Este documento es una guía de planificación para establecer conexión con el ur10 real, y validar el control externo del robot.
  
+---
+
+## Objetivos
+
+- [ ] Familiarizarse con el entorno de trabajo del laboratorio  
+- [ ] Documentar los datos específicos de la conexión del robot con el PC  
+- [ ] Primer contacto de control del robot con ROS  
+- [ ] Diagnóstico y análisis del timeout de desconexión 
+
 ---
 
 ## Requisitos previos
@@ -99,12 +108,97 @@ Mover el ur10 a través del programa predefinido de freedrive:
 ```bash
 ros2 topic pub --rate 2 /freedrive_mode_controller/enable_freedrive_mode std_msgs/msg/Bool "{data: true}"
 ```
+En caso de querer hacer otras comprobaciones, mirar la lista de servicios disponibles en el entorno:
+
+```bash
+ros2 service list
+```
  
 ---
 
 ## 4️⃣ Análisis del estado del robot durante las pruebas
 
-## 5️⃣ Obtención de posición inicial
+Durante el desarrollo de estas pruebas, se recomienda comprobar de vez en cuando el estado del robot. Se ha comentado que existe un _timeout_ que desconecta el External Control sin avisar. Como objetivo secundario (aunque de gran importancia) en estas pruebas, se espera diagnosticar este _timeout_. 
+
+### Comprobar el estado del programa
+
+```bash
+ros2 service call /dashboard_client/program_state ur_dashboard_msgs/srv/GetProgramState "{}"
+```
+Los posibles estados que pueden aparecer son los siguientes:
+
+| Estado   | Descripción                             |
+|----------|-----------------------------------------|
+| STOPPED  | No hay programa en ejecución            |
+| PLAYING  | Hay un programa cargando y en ejecución |
+| PAUSED   | Hay un programa cargado y en pausa      |
+
+> [!NOTE]
+> Cuando se active el external control, el estado del programa debería ser `PLAYING`.
+
+### Comprobar el modo del robot
+
+```bash
+ros2 service call /dashboard_client/get_robot_mode ur_dashboard_msgs/srv/GetRobotMode "{}"
+```
+Los posibles modos que pueden aparecer son los siguientes:
+
+ Valor  | Estado             | Descripción                                     |
+|-------|--------------------|-------------------------------------------------|
+| -1    | NO_CONTROLLER      | No se detecta controlador                       |
+| 0     | DISCONNECTED       | No hay conexión con el robot                    |
+| 1     | CONFIRM_SAFETY     | Espera de confirmación tras una parada          |
+| 2     | BOOTING            | Robot en proceso de arranque                    |
+| 3     | POWER_OFF          | Alimentación apagada                            |
+| 4     | POWER_ON           | Alimentación encendida, pero robot no operativo |
+| 5     | IDLE               | Robot operativo, esperando un programa          |
+| 6     | BACKDRIVE          | Modo _freedrive_                                |
+| 7     | RUNNING            | Programa ejecutándose                           |
+| 8     | UPDATING_FIRMWARE  | Software del robot actualizándose               |
+
+### Comprobar modo de seguridad
+
+```bash
+ros2 service call /dashboard_client/get_safety_mode ur_dashboard_msgs/srv/GetSafetyMode "{}"
+```
+Los posibles modos de seguridad son los siguientes:
 
 
+ Valor  | Estado                               | Descripción                                                                  |
+|--------|-------------------------------------|------------------------------------------------------------------------------|
+| 1      | NORMAL                              | El robot acepta movimientos o servicios                                      |
+| 2      | REDUCED                             | El robot acepta movimientos con limitaciones                                 |
+| 3      | PROTECTIVE_STOP                     | El controlador del robot detecta que no puede hacer el movimiento solicitado |
+| 4      | RECOVERY                            | Estado del robot tras un evento de seguridad                                 |
+| 5      | SAFEGUARD_STOP                      | Sistema salvaguarda                                                          |
+| 6      | SYSTEM_EMERGENCY_STOP               | Parada a nivel sistema                                                       |
+| 7      | ROBOT_EMERGENCY_STOP                | Parada a nivel robot                                                         |
+| 8      | VIOLATION                           |                                                                              |
+| 9      | FAULT                               | Fallo de seguridad, llamar a soporte técnico                                 |
+| 10     | VALIDATE_JOINT_ID                   | Fallo de seguridad, responsabilidad del fabricante                           |  
+| 11     | UNDEFINED_SAFETY_MODE               | Inconsistencia indefinida                                                    |
+| 12     | AUTOMATIC_MODE_SAFEGUARD_STOP       |                                                                              |
+| 13     | SYSTEM_THREE_POSITION_ENABLING_STOP |                                                                              |
 
+### Restaurar el modo de operación
+
+En caso de desconexión con el robot debido al _timeout_ o por cualquiero otro motivo, se puede recuperar el estado del robot con el siguiente comando:
+
+```bash
+ros2 action send_goal /ur_robot_state_helper/set_mode ur_dashboard_msgs/action/SetMode "{ target_robot_mode: 7, stop_program: true, play_program: true}"
+```
+> Este `action` de ROS intenta llevar el robot al modo `RUNNING` (7), detiene el programa activo y lo vuelve a lanzar.
+
+## 5️⃣ Obtención de posiciones
+
+Para la obtención de posiciones o comprobaciones en las trayectorias, se pueden leer el estado del robot con los siguientes comandos. 
+
+```bash
+ros2 topic echo /joint_states
+```
+> Este `topic` publica las posiciones articulares del robot.
+
+```bash
+ros2 run tf2_ros tf2_echo world cama_impresion
+```
+> Este programa predefinido da las transformaciones entre dos sistemas de referencia. El formato es de cuaterniones unitarios, posiciones cartesianas.
