@@ -23,11 +23,11 @@ Accede a `Setup Robot → Network` y configura los siguientes parámetros:
  
 | Parámetro              | Valor             |
 |------------------------|:-----------------:|
-| IP address             | `192.168.0.102`  |
-| Subnet mask            | `255.255.255.0`   |
-| Default gateway        | `192.168.0.9`    |
-| Preferred DNS server   | `192.168.0.9`    |
-| Alternative DNS server | `0.0.0.0`         |
+| IP address             | `ip_ordenador`  |
+| Subnet mask            | `XXX.XXX.XXX.X`   |
+| Default gateway        | `XXX.XXX.X.X`    |
+| Preferred DNS server   | `XXX.XXX.X.X`    |
+| Alternative DNS server | `X.X.X.X`         |
 
 ### En el PC
  
@@ -37,19 +37,19 @@ Accede a `Setup Robot → Network` y configura los siguientes parámetros:
 | Parámetro | Valor            |
 |-----------|:----------------:|
 | Modo IPv4 | Manual           |
-| Address   | `192.168.0.1`   |
-| Netmask   | `255.255.255.0`  |
+| Address   | `XXX.XXX.X.X`   |
+| Netmask   | `XXX.XXX.XXX.X`  |
 
 3. Verifica la conexión entre el PC y el ur10 haciendo ping al robot desde la terminal:
  
 ```
-ping 192.168.0.9
+ping <ip_ordenador>
 ```
 
 Si todo ha ido bien y se ha establecido conexión, la respuesta de la terminal debería ser algo similar a lo siguiente:
 
 ```
-64 bytes from 192.168.56.101: icmp_seq=1 ttl=64 time=0.037 ms
+64 bytes from <ip_ordenador>: icmp_seq=1 ttl=64 time=0.037 ms
 ```
 
 ## Lanzamiento del _Driver_ de ROS2
@@ -57,7 +57,7 @@ Si todo ha ido bien y se ha establecido conexión, la respuesta de la terminal d
 Antes de ceder el control a ROS2, es necesario lanzar los controladores de ROS2 a través del driver de Universal Robots ([link](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble))
  
 ```bash
-ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur10 robot_ip:=192.168.0.9 launch_rviz:=false
+ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur10 robot_ip:=<ip_ordenador> launch_rviz:=false
 ```
  
 Con el driver lanzado, se comprueba que se encuentran activos los servicios de ROS para el _dashboard_.
