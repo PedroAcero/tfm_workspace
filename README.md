@@ -59,6 +59,12 @@ Explicación breve del repo
 <a name="content"></a>
 ## CONTENIDO DEL REPOSITORIO
 
+- `ur_description`: URDF, cadena cinemática
+- `ur_driver`: ur_controllers, ur_moveit_config, ur_robot_driver
+- `npam_trajectory`: cartesian_planner, joint_planner, pilz_planner
+- `npam_logger`: Resultados
+
+
 ---
 
 ## ÍNDICE PROVISIONAL
@@ -68,4 +74,7 @@ Explicación breve del repo
 * [Control del _Teach Pendant_](src/docs/dashboard.md)
 
 ---
+
+(Vídeos y fotos!)
+
 :house: [HOME](#home)
