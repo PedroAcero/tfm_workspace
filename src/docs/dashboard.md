@@ -29,6 +29,8 @@ Accede a `Setup Robot → Network` y configura los siguientes parámetros:
 | Preferred DNS server   | `192.168.0.9`    |
 | Alternative DNS server | `0.0.0.0`         |
 
+Además de configurar estos parámetros, es necesario añadir el nombre de usuario del equipo utilizado.
+
 ### En el PC
  
 1. Desactiva el WiFi y cualquier otra interfaz de red activa que use el mismo rango IP.
@@ -127,8 +129,11 @@ En caso de querer hacer otras comprobaciones, mirar la lista de servicios dispon
 ros2 service list
 ```
 > [!WARNING]
-> Estas instrucciones para lanzar el _freedrive_ no funcionó correctamente durante las pruebas.
- 
+> Para poder utilizar esta función, es necesario tener activo el controlador `freedrive_mode_controller`. Puede haber varias maneras de activarlo, pero se recomienda activar con el clic derecho tras la siguiente instrucción en la terminal:
+
+```bash
+ros2 run rqt_controller_manager rqt_controller_manager
+ ```
 ---
 
 ## 4️⃣ Análisis del estado del robot durante las pruebas
