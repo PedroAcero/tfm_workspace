@@ -59,10 +59,12 @@ Explicación breve del repo
 <a name="content"></a>
 ## CONTENIDO DEL REPOSITORIO
 
-- `ur_description`: URDF, cadena cinemática
-- `ur_driver`: ur_controllers, ur_moveit_config, ur_robot_driver
-- `npam_trajectory`: cartesian_planner, joint_planner, pilz_planner
-- `npam_logger`: Resultados
+![diagrama](src/docs/images/arquitectura.png)
+
+- `ur_description`: Paquete de ROS que proporciona los modelos de diferentes modelos de la serie UR para la planificación y visualización. Link al repositorio original: [link](https://github.com/UniversalRobots/Universal_Robots_ROS2_Description/tree/humble).
+- `ur_driver`: Paquete de ROS que permite la comunicación entre ROS y un robot real. Link al repositorio original: [link](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble). 
+- `npam_trajectory`: Paquete de ROS propio que proces archivos G-Code, y genera trayectorias con ayuda de MoveIt.
+- `npam_logger`: Paquete de ROS propio dedicado al registro de datos de interés.
 
 
 ---
