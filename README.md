@@ -50,8 +50,8 @@ Este repositorio se enmarca como Trabajo de Fin de Máster desarrollado en la Un
 "Diseño de Sistemas Inteligentes con Robots y AGVs", en el que los alumnos desarrollan proyectos de impresión 3D en entornos multidisciplinares. 
 
 Este repositorio se ha apoyado en el trabajo y código de cursos anteriores:
-- [Curso 2023/24](https://github.com/AdelaJim/TFM_AdelaJimenez?tab=readme-ov-file): Adela Jiménez
-- [Curso 2024/25](https://github.com/Miguel-LA/TFM_MiguelLerinAlonso): Miguel Lerín Alonso 
+- [Curso 2023/24](https://github.com/Miguel-LA/TFM_MiguelLerinAlonso): Miguel Lerín Alonso
+- [Curso 2024/25](https://github.com/AdelaJim/TFM_AdelaJimenez?tab=readme-ov-file): Adela Jiménez
 
 ---
 <a name="getting-started"></a>
