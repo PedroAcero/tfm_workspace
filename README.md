@@ -57,6 +57,7 @@ Este repositorio se ha apoyado en el trabajo y código de cursos anteriores:
 <a name="getting-started"></a>
 ## PUESTA EN MARCHA
 
+<a name="prerequisites"></a>
 ### Requisitos Previos
 
 **Software**
@@ -72,8 +73,6 @@ Este repositorio se ha apoyado en el trabajo y código de cursos anteriores:
 
 - Robot de Universal Robots UR10 (compatible con CB3 / e-Series)
 - Conexión Ethernet directa entre el PC de control y el controlador del robot.
-
-<a name="prerequisites"></a>
 
 <a name="installation"></a>
 ### Instalación
@@ -189,17 +188,54 @@ La terminal debería devolver `npam_logger`, `npam_trajectory` y todos los paque
 <a name="usage"></a>
 ### Casos de Uso
 
+**(OPCIONAL)** Para realizar pruebas sin hardware, se dispone de un entorno simulado empaquetado en una imagen Docker. Consultar la guía de configuración 
+del entorno simulado en [link].
+
+```bash
+ros2 run ur_client_library start_ursim.sh -m ur10
+```
+
+Para realizar las pruebas con el robot real, es necesario inicializar el hardware. Para ello, encender el controlador del UR10 y el Teach Pendant. Para la configuración
+de la conexión Ethernet entre el PC y el robot, consultar la [guía].
+
+Arrancar el driver de comunicación con ROS:
+
+```bash
+ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur10 robot_ip:=192.168.XX.XXX launch_rviz:=false
+```
+
+Ejecutar el programa `external_control.urp` desde el Teach Pendant antes  de continuar. Sin este paso, MoveIt2 no podrá enviar comandos al robot.   
+
+Arrancar MoveIt:
+
+```bash
+ros2 launch ur_moveit_config ur_moveit.launch.py ur_type:=ur10 launch_rviz:=true
+```
+
+>[!NOTE]
+>Se recomienda arrancar el driver y MoveIt en dos terminales diferentes para identificar y analizar los mensajes de cada elemento por separado.
+
+
+Para la ejecución de trayectorias, seleccionar el planificador deseado. 
+
+```bash
+ros2 launch npam_trajectory pilz_trajectory.launch.py
+```
+
 ---
 <a name="content"></a>
 ## CONTENIDO DEL REPOSITORIO
-
-![diagrama](src/docs/images/arquitectura.png)
 
 - `ur_description`: Paquete de ROS que proporciona los modelos de diferentes modelos de la serie UR para la planificación y visualización. Link al repositorio original: [link](https://github.com/UniversalRobots/Universal_Robots_ROS2_Description/tree/humble).
 - `ur_driver`: Paquete de ROS que permite la comunicación entre ROS y un robot real. Link al repositorio original: [link](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble). 
 - `npam_trajectory`: Paquete de ROS propio que proces archivos G-Code, y genera trayectorias con ayuda de MoveIt.
 - `npam_logger`: Paquete de ROS propio dedicado al registro de datos de interés.
 
+![diagrama](src/docs/images/arquitectura.png)
+
+Para más detalle, consultar los siguientes enlaces: 
+
+(...)
 
 ---
 
