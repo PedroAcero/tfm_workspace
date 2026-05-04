@@ -458,6 +458,24 @@
       </collision>
     </link>
 
+    <link name="barra_extrusor">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${pi/2}"/>
+        <geometry>
+          <mesh filename="file://$(find ur_description)/meshes/Escenas/barra_extrusor.stl" scale="0.0001 0.0001 0.0001"/>
+        </geometry>
+        <material name="GreyMetallic">
+          <color rgba="0.7 0.7 0.7 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find ur_description)/meshes/Escenas/barra_extrusor.stl" scale="0.0001 0.0001 0.0001"/>
+        </geometry>
+      </collision>
+    </link>
+
     <link name="${tf_prefix}cama_impresion">
       <visual>
         <origin xyz="-0.0103 -0.0103 0.083" rpy="0 ${-pi/2} 0 "/>
@@ -489,6 +507,12 @@
       <child link="mesa" />
       <origin xyz="0.76884 -0.27794 -0.16726" rpy="-0.0054 -0.0053 0.0116"/> 
       <axis xyz="0 0 1" />
+    </joint>
+
+    <joint name="barra_extrusor_joint" type="fixed">
+      <parent link="mesa" />
+      <child link="barra_extrusor" />
+      <origin xyz="-0.3 -0.68 0.36" rpy="0 ${-pi/2} 0" />
     </joint>
     
     <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->

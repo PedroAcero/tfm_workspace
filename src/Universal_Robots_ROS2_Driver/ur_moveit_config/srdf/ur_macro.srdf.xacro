@@ -88,24 +88,30 @@
     <!--DISABLE COLLISIONS - By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="${prefix}base_link" link2="${prefix}base_link_inertia" reason="Adjacent" />
     <disable_collisions link1="${prefix}base_link_inertia" link2="${prefix}shoulder_link" reason="Adjacent" />
-    <disable_collisions link1="${prefix}tool0" link2="${prefix}wrist_1_link" reason="Never" />
-    <disable_collisions link1="${prefix}tool0" link2="${prefix}wrist_2_link" reason="Never" />
-    <disable_collisions link1="${prefix}tool0" link2="${prefix}wrist_3_link" reason="Adjacent" />
-    <disable_collisions link1="${prefix}forearm_link" link2="${prefix}upper_arm_link" reason="Adjacent" />
-    <disable_collisions link1="${prefix}forearm_link" link2="${prefix}wrist_1_link" reason="Adjacent" />
     <disable_collisions link1="${prefix}shoulder_link" link2="${prefix}upper_arm_link" reason="Adjacent" />
+    <disable_collisions link1="${prefix}upper_arm_link" link2="${prefix}forearm_link" reason="Adjacent" />
+    <disable_collisions link1="${prefix}forearm_link" link2="${prefix}wrist_1_link" reason="Adjacent" />
     <disable_collisions link1="${prefix}wrist_1_link" link2="${prefix}wrist_2_link" reason="Adjacent" />
-    <disable_collisions link1="${prefix}wrist_1_link" link2="${prefix}wrist_3_link" reason="Never" />
     <disable_collisions link1="${prefix}wrist_2_link" link2="${prefix}wrist_3_link" reason="Adjacent" />
+    <disable_collisions link1="${prefix}tool0" link2="${prefix}wrist_3_link" reason="Adjacent" />
+    <disable_collisions link1="${prefix}wrist_3_link" link2="cama_impresion" reason="Adjacent" />
+    <disable_collisions link1="cama_impresion" link2="${prefix}tool0" reason="Adjacent" />
+
+    <disable_collisions link1="mesa" link2="${prefix}base_link" reason="Adjacent" />
+    <disable_collisions link1="mesa" link2="${prefix}base_link_inertia" reason="Adjacent" />
+    <disable_collisions link1="mesa" link2="barra_extrusor" reason="Adjacent" />
 
     <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
-    <disable_collisions link1="cama_impresion" link2="${prefix}tool0" reason="Adjacent" />
+    
+    <disable_collisions link1="${prefix}tool0" link2="${prefix}wrist_1_link" reason="Never" />
+    <disable_collisions link1="${prefix}tool0" link2="${prefix}wrist_2_link" reason="Never" />   
+    <disable_collisions link1="${prefix}wrist_1_link" link2="${prefix}wrist_3_link" reason="Never" />
     <disable_collisions link1="cama_impresion" link2="${prefix}wrist_3_link" reason="Never" />
     <disable_collisions link1="cama_impresion" link2="${prefix}wrist_2_link" reason="Never" />
     <disable_collisions link1="cama_impresion" link2="${prefix}wrist_1_link" reason="Never" />
-    <disable_collisions link1="mesa" link2="${prefix}base_link" reason="Adjacent" />
-    <disable_collisions link1="mesa" link2="${prefix}base_link_inertia" reason="Never" />
     <disable_collisions link1="mesa" link2="${prefix}shoulder_link" reason="Default" />
+    <disable_collisions link1="barra_extrusor" link2="base_link_inertia" reason="Never" />
+    <disable_collisions link1="barra_extrusor" link2="shoulder_link" reason="Never" />
 
     </xacro:macro>
 </robot>

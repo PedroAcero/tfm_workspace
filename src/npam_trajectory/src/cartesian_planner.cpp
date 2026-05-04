@@ -274,7 +274,7 @@ int main(int argc, char *argv[]) {
               move_group.getPlanningFrame().c_str());
 
   // Configurar end-effector
-  move_group.setEndEffectorLink("cama_impresion");
+  // move_group.setEndEffectorLink("cama_impresion");
   RCLCPP_INFO(logger, "End effector link: %s",
               move_group.getEndEffectorLink().c_str());
 

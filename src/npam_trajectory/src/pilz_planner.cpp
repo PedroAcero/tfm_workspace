@@ -333,7 +333,7 @@ int main(int argc, char *argv[]) {
   RCLCPP_INFO(logger, "Planning frame: %s",
               move_group.getPlanningFrame().c_str());
 
-  move_group.setEndEffectorLink("cama_impresion");
+  // move_group.setEndEffectorLink("cama_impresion");
   RCLCPP_INFO(logger, "End effector link: %s",
               move_group.getEndEffectorLink().c_str());
 
