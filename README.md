@@ -1,4 +1,14 @@
 <a name="home"></a>
+# Robot-Based Non-Planar Additive Manufacturing · ROS 2
+
+**Trajectory Planning Architecture · UPM**
+
+Desarrollo de una arquitectura digital para procesos de fabricación aditiva, que integra la comunicación con los elementos físicos, la planificación y ejecución de trayectorias y la configuración del entorno de simulación mediante ROS 2 y MoveIt 2.
+
+## Introducción
+
+## Puesta en marcha
+
 # REPOSITORIO DE NPAM PROJECT (INGENIA 25/26)
 
 Este repositorio ha sido desarrollado para el control del movimiento de un robot colaborativo, con el objetivo de habilitar procesos de fabricación aditiva no plana (NPAM).
