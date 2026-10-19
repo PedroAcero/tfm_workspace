@@ -1,13 +1,36 @@
 <a name="home"></a>
-# Robot-Based Non-Planar Additive Manufacturing · ROS 2
 
-**Trajectory Planning Architecture · UPM**
+<div align="center">
+  
+# Robot-Based Non-Planar Additive Manufacturing · RBNPAM
 
-Desarrollo de una arquitectura digital para procesos de fabricación aditiva, que integra la comunicación con los elementos físicos, la planificación y ejecución de trayectorias y la configuración del entorno de simulación mediante ROS 2 y MoveIt 2.
+**Path Planning Architecture · ROS 2**
 
-## Introducción
+<sub>Design of a digital architecture for additive manufacturing processes, integrating physical system communication and synchronization, path planning, trajectory execution, and simulation environment configuration using ROS 2 and MoveIt 2.
 
-## Puesta en marcha
+</div>
+
+## Overview
+
+### Motivation
+
+Conventional additive manufacturing processes face several limitations, including the staircase effect, the need for support structures, and the anisotropy of mechanical properties. Robotic-based non-planar additive manufacturing (RBNPAM) has emerged as a promising approach to overcome some of these limitations by exploiting robotic systems and non-planar deposition strategies.
+
+However, the increased flexibility of robotic manufacturing introduces additional challenges in slicing and trajectory planning. Unlike conventional 3D printing, robot motion must account for factors such as kinematic constraints, tool orientation and potential collisions with the workpiece or surrounding equipment.
+
+### Project Contribution
+
+This project presents a first approach towards a digital architecture for robotic additive manufacturing. The architecture integrates the main elements of the manufacturing station, robot communication and control, simulation environment configuration, and trajectory planning and execution using ROS 2 and MoveIt 2.
+
+The work focuses on the integration of these components and the development of a planning framework capable of translating manufacturing trajectories into executable robot motions. It provides a documented starting point for further development of planning strategies and robotic non-planar additive manufacturing processes.
+
+### Project Context
+
+This work contributes to a broader doctoral research project led by Álvaro Guzmán Bautista on robotic-based non-planar additive manufacturing. The implementation relies primarily on the ROS 2 tools and repositories provided by Universal Robots, together with the MoveIt 2 framework.
+
+The project was also developed alongside the Ingenia course, serving as a practical contribution to the development and integration of the robotic manufacturing system.
+
+## Quick start
 
 # REPOSITORIO DE NPAM PROJECT (INGENIA 25/26)
 
