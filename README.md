@@ -8,15 +8,30 @@
 
 <sub>Design of a digital architecture for additive manufacturing processes, integrating physical system communication and synchronization, path planning, trajectory execution, and simulation environment configuration using ROS 2 and MoveIt 2.
 
+<br>
+
+![Last Commit](https://img.shields.io/github/last-commit/PedroAcero/tfm_workspace)
+![Top language](https://img.shields.io/github/languages/top/PedroAcero/tfm_workspace)
+![Languages](https://img.shields.io/github/languages/count/PedroAcero/tfm_workspace)
+![ROS 2](https://img.shields.io/badge/ROS_2-Humble-22314E?logo=ros&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu&logoColor=white)
+ 
+<br>
+
+[Overview](#overview) · [Quick start](#quick-start) · [Demo](#demo) · [Technical documentation](#technical-documentation)
+
 </div>
 
+<a name="overview"></a>
 ## Overview
 
 ### Motivation
 
-Conventional additive manufacturing processes face several limitations, including the staircase effect, the need for support structures, and the anisotropy of mechanical properties. Robotic-based non-planar additive manufacturing (RBNPAM) has emerged as a promising approach to overcome some of these limitations by exploiting robotic systems and non-planar deposition strategies.
+Conventional additive manufacturing processes face several limitations, including the staircase effect, the need for support structures, and the anisotropy of mechanical properties. Robotic-based non-planar additive manufacturing (RBNPAM) has emerged as a promising approach to overcome these limitations by exploiting robotic manipulators and non-planar deposition strategies.
 
-However, the increased flexibility of robotic manufacturing introduces additional challenges in slicing and trajectory planning. Unlike conventional 3D printing, robot motion must account for factors such as kinematic constraints, tool orientation and potential collisions with the workpiece or surrounding equipment.
+[Figuras]
+
+However, the increased flexibility of robotic manufacturing introduces additional challenges in slicing and trajectory planning. Unlike conventional 3D printing, robot motion must take into account factors such as kinematic constraints, tool orientation and potential collisions with the workpiece or the workplace surroundings.
 
 ### Project Contribution
 
@@ -30,6 +45,7 @@ This work contributes to a broader doctoral research project led by Álvaro Guzm
 
 The project was also developed alongside the Ingenia course, serving as a practical contribution to the development and integration of the robotic manufacturing system.
 
+<a name="#quick-start"></a>
 ## Quick start
 
 # REPOSITORIO DE NPAM PROJECT (INGENIA 25/26)
