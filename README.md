@@ -235,14 +235,85 @@ The architecture connects the `npam_trajectory` package with MoveIt 2 and the Un
   
 ### Demonstration Video
 
-![Demonstration video](src/docs/video/tfm_comprimido.mp4)
+https://github.com/user-attachments/assets/d3f98c0b-bcc9-4f4c-9425-575a91952ca3
 
+[▶ Watch the full video](src/docs/video/tfm_comprimidp.mp4)
 
 
 <a name="#technical-documentation"></a>
 ## Technical documentation
 
-<!-- Pending -->
+## Technical documentation
+
+### System architecture
+
+The diagram below shows a simplified view of the proposed architecture. Everything inside the dashed blue frame runs on the control PC under ROS 2, while the UR10 robot, its Teach Pendant and the extrusion hardware are external to it.
+
+<div align="center">
+  <img src="src/docs/images/arquitectura.png" alt="Simplified system architecture" width="90%">
+  <br>
+  <sub><b>Figure 2.</b> Simplified architecture of the proposed system.</sub>
+</div>
+
+<br>
+
+The process starts with a **G-code file**, which is handled by the `npam_trajectory` package. This package reads the G-code, plans the path, applies the time parametrization and synchronizes the robot motion with the extrusion and temperature control.
+
+The resulting path is passed to **MoveIt 2**, which plans the motion according to the robot kinematics and constraints, and sends the trajectory to the Joint Trajectory Controller of the **Universal Robots driver** (`ur_driver`). The driver communicates with the UR10 through the Teach Pendant, where the `external_control.urp` program must be running, and also provides the dashboard interface, the I/O and status controller, and the joint state and TCP pose broadcasters. These broadcasters feed `ur_description`, so that **RViz 2** displays the robot model and the planned motions.
+
+In parallel, the **micro-ROS agent** connects the ROS 2 system with a microcontroller (MCU), which is responsible for the extruder control and the temperature control of the hotend.
+
+
+### Detailed documentation
+
+The following documents expand on specific aspects of the project:
+
+<table>
+  <tr>
+    <td width="180" align="center">
+      <a href="src/docs/simulation.md">
+        <img src="src/docs/images/simulation.png" alt="Simulation environment" width="160">
+      </a>
+    </td>
+    <td>
+      <b><a href="src/docs/simulation.md">1. Simulation environment</a></b><br>
+      Configuration of the simulated environment with URSim and Docker, used to test the architecture without physical hardware.
+    </td>
+  </tr>
+  <tr>
+    <td width="180" align="center">
+      <a href="src/docs/planning.md">
+        <img src="src/docs/images/planning.png" alt="Trajectory planning" width="160">
+      </a>
+    </td>
+    <td>
+      <b><a href="src/docs/planning.md">2. Trajectory planning</a></b><br>
+      G-code processing and motion planning with MoveIt 2, including the planning algorithms used and their configuration.
+    </td>
+  </tr>
+  <tr>
+    <td width="180" align="center">
+      <a href="src/docs/troubleshooting.md">
+        <img src="src/docs/images/troubleshooting.png" alt="Troubleshooting" width="160">
+      </a>
+    </td>
+    <td>
+      <b><a href="src/docs/troubleshooting.md">3. Troubleshooting</a></b><br>
+      Common installation and build errors, with their causes and solutions.
+    </td>
+  </tr>
+  <tr>
+    <td width="180" align="center">
+      <a href="src/docs/future_work.md">
+        <img src="src/docs/images/future_work.png" alt="Future work" width="160">
+      </a>
+    </td>
+    <td>
+      <b><a href="src/docs/future_work.md">4. Future work</a></b><br>
+      Limitations of the current implementation and proposed lines of development.
+    </td>
+  </tr>
+</table>
 
 
 :house: [HOME](#home)
