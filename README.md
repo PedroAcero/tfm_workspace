@@ -293,13 +293,13 @@ The following documents expand on specific aspects of the project:
   </tr>
   <tr>
     <td width="180" align="center">
-      <a href="src/docs/troubleshooting.md">
+      <a href="src/docs/testing.md">
         <img src="src/docs/images/troubleshooting.png" alt="Troubleshooting" width="160">
       </a>
     </td>
     <td>
-      <b><a href="src/docs/troubleshooting.md">3. Troubleshooting</a></b><br>
-      Common installation and build errors, with their causes and solutions.
+      <b><a href="src/docs/troubleshooting.md">3. Testing</a></b><br>
+      Testes.
     </td>
   </tr>
   <tr>
