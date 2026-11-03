@@ -28,9 +28,9 @@ The simulation environment is based on the official ROS 2 packages provided by U
 | Package | Upstream repository | Role |
 |---------|--------------------|------|
 | `ur_description` | [Universal_Robots_ROS2_Description](https://github.com/UniversalRobots/Universal_Robots_ROS2_Description/tree/humble) | Robot models (URDF/xacro, meshes) and kinematic, physical and visual parameters of the UR series |
-| `ur_robot_driver` | [Universal_Robots_ROS2_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble) | Communication and control of the physical robot. |
+| `ur_robot_driver` | [Universal_Robots_ROS2_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble) | Control and communication with the physical robot. |
 | `ur_controllers` | [Universal_Robots_ROS2_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble) | Robot controllers and hardware interfaces. |
-| `ur_calibration` | [Universal_Robots_ROS2_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble) | Extraction and application of robot-specific calibration parameters. |
+| `ur_calibration` | [Universal_Robots_ROS2_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble) | Extraction of robot-especific calibration parameters. |
 | `ur_moveit_config` | [Universal_Robots_ROS2_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble) | MoveIt 2 configuration for Universal Robots manipulators. |
 
 The project workspace contains modified copies of the packages required by the application. However, it is recomended to create new files for new applications. 
@@ -50,15 +50,23 @@ Two modifications were therefore introduced:
 
 ### 1.1 Kinematic calibration
 
-Each Universal Robots manipulator is factory-calibrated. The resulting robot-specific kinematic parameters differ slightly from the nominal values used in the generic robot description. The `ur_calibration` package provides a tool to extract these parameters from the robot controller and generate a calibration file.
+Each Universal Robots manipulator is factory-calibrated. The resulting robot-especific kinematic parameters differ slightly from the nominal values used in the generic robot description. The `ur_calibration` package provides a tool to extract these parameters from the robot controller and generate a calibration file.
 
 The calibration was obtained using the following command:
 
 ```bash
 ros2 launch ur_calibration calibration_correction.launch.py robot_ip:=192.168.XX.XXX target_filename:="${HOME}/my_robot_calibration.yaml"
 ```
-The extracted values were transferred to the corresponding [default_kinematics.yaml](../../src/Universal_Robots_ROS2_Description/config/ur10/default_kinematics.yaml) configuration file in `ur_description`. This ensures that the robot model used by MoveIt 2 represents the geometry of the physical UR10 more accurately, particularly when calculating forward and inverse kinematics and the position of the tool reference frame.
-
+The extracted values were transferred to [default_kinematics.yaml](../../src/Universal_Robots_ROS2_Description/config/ur10/default_kinematics.yaml), so that the model used by MoveIt (forward and inverse kinematics, and visualization) represents the real robot more faithfully. This improves both the simulation and the planning.
+ 
+The parameters d<sub>1</sub>, a<sub>2</sub>, a<sub>3</sub>, d<sub>4</sub>, d<sub>5</sub> and d<sub>6</sub> are the offsets and link lengths of the D-H model shown in Figure 1a. Figure 1b shows the names of the joints and links of the UR10.
+ 
+<div align="center">
+  <img src="images/DH params.png" alt="D-H frames and joint names of the UR10" width="55%">
+  <br>
+  <sub><b>Figure 1.</b> (a) D-H reference frames and parameters of the UR10. (b) Names of its joints and links.</sub> Source: Source: <a href="https://www.researchgate.net/publication/398586997_Extended_Dynamic_Model_for_the_UR16e_6-Degree-of-Freedom_Robotic_Manipulator"> University of Santiago of Chile, 2025</a></sub>
+</div>
+<br>
 **Modified parameters**
 
 | D-H parameter | Field in `.yaml` | Nominal value | Calibrated value | Difference |
@@ -75,6 +83,24 @@ Although the differences are relatively small, they can affect the accuracy of t
 
 > [!NOTE]
 > The calibration data is specific to each robot unit. If the configuration is used with another UR10, the calibration must be extracted again and the corresponding values updated.
+
+**Visualizing the URDF Model**
+
+The modifications made to the URDF/Xacro description can be visualized using the robot description package's visualization launch file:
+
+```bash
+ros2 launch ur_description view_ur.launch.xml ur_type:=ur10
+```
+
+This command launches the robot model visualization in RViz 2, allowing the updated kinematic structure and the added manufacturing station elements to be inspected. It provides a straightforward way to verify the URDF modifications before integrating the model into the MoveIt 2 planning environment.
+
+<div align="center">
+  <img src="images/new srefs.png" alt="Modified model in RViz 2" width="75%">
+  <br>
+  <sub><b>Figure 2.</b> Modified model in RViz 2: UR10 with the coordinate frames of the kinematic chain.</sub>
+</div>
+<br>
+
 
 ### 1.2 Joint velocity limits
 
@@ -131,9 +157,9 @@ graph TD
 
 | Category | Frames | Description |
 |:-----:|--------|-------------|
-| 🟦 Robot | `base_link` to `tool0` | Original UR10 kinematic chain. |
-| 🟩 End-effector | Printing bed | Printing bed attached to the robot. |
-| ⬜ Station environment |  Station table, extruder bar | Fixed elements representing the manufacturing station. |
+| ⬜ Robot | `base_link` to `tool0` | Original UR10 kinematic chain. |
+| ▢ End-effector | Printing bed | Printing bed attached to the robot. |
+| 🟩 Station environment |  Station table, extruder bar | Fixed elements representing the manufacturing station. |
 
 ---
 
