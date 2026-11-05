@@ -77,7 +77,7 @@ The resulting joint-space path is subsequently processed through a time parametr
 ```mermaid
 flowchart LR
     A["G-code"] --> B["<b> gcode_reader() </b><br/>waypoints P0...PN"]
-    B --> C["<b> computeCartesianPath() </b> <br/>IK at each interpolated pose"]
+    B --> C["<b> computeCartesianPath()</b><br/>IK at each interpolated pose"]
     C --> D["Geometric joint trajectory<br/>Q0...QN"]
     D --> E["<b> Time parametrization (IPTP) </b> <br/>velocity and acceleration scaling"]
     E --> F["<b> q(t), q'(t), q''(t), t </b>"]
