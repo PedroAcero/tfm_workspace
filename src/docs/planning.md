@@ -76,11 +76,11 @@ The resulting joint-space path is subsequently processed through a time parametr
 
 ```mermaid
 flowchart LR
-    A["G-code"] --> B["gcode_reader()<br/>waypoints P0...PN"]
-    B --> C["computeCartesianPath()<br/>IK at each interpolated pose"]
+    A["G-code"] --> B["<b> gcode_reader() </b><br/>waypoints P0...PN"]
+    B --> C["<b> computeCartesianPath() </b> <br/>IK at each interpolated pose"]
     C --> D["Geometric joint trajectory<br/>Q0...QN"]
-    D --> E["Time parametrization (IPTP)<br/>velocity and acceleration scaling"]
-    E --> F["q(t), q'(t), q''(t), t"]
+    D --> E["<b> Time parametrization (IPTP) </b> <br/>velocity and acceleration scaling"]
+    E --> F["<b> q(t), q'(t), q''(t), t </b>"]
 
     style A fill:#E2F0D9,stroke:#70AD47,color:#000
     style B fill:#E2F0D9,stroke:#70AD47,color:#000
@@ -144,11 +144,11 @@ The input waypoints are converted into a sequence of linear motion commands, one
 
 ```mermaid
 flowchart LR
-    A["G-code"] --> B["gcode_reader()<br/>waypoints P0...PN"]
-    B --> C["buildSequenceRequest()<br/>one LIN segment per pair of waypoints"]
-    C --> D["/sequence_move_group<br/>MoveGroupSequence action"]
+    A["G-code"] --> B["<b> gcode_reader() </b><br/>waypoints P0...PN"]
+    B --> C["<b> buildSequenceRequest() </b><br/>one LIN segment per pair of waypoints"]
+    C --> D["<b> /sequence_move_group </b><br/>MoveGroupSequence action"]
     D --> E["Pilz LIN planner<br/>Cartesian velocity profile"]
-    E --> F["Sequence of N trajectories<br/>q(t), q'(t), q''(t), t"]
+    E --> F["Sequence of N trajectories<br/> <b>q(t), q'(t), q''(t), t </b>"]
 
     style A fill:#D9EAF7,stroke:#5B9BD5,color:#000
     style B fill:#D9EAF7,stroke:#5B9BD5,color:#000
