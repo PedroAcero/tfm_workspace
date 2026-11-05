@@ -74,6 +74,7 @@ The first strategy uses the Cartesian Path Computation functionality provided by
 
 The resulting joint-space path is subsequently processed through a time parametrization algorithm to obtain a trajectory suitable for execution. 
 
+```mermaid
 flowchart LR
     A["G-code"] --> B["gcode_reader()<br/>waypoints P0...PN"]
     B --> C["computeCartesianPath()<br/>IK at each interpolated pose"]
@@ -87,6 +88,7 @@ flowchart LR
     style D fill:#E2F0D9,stroke:#70AD47,color:#000
     style E fill:#E2F0D9,stroke:#70AD47,color:#000
     style F fill:#E2F0D9,stroke:#70AD47,color:#000
+```
 
 ### 3.1 Initial state
 
@@ -140,6 +142,7 @@ The second strategy uses the **Pilz Industrial Motion Planner**, specifically it
 
 The input waypoints are converted into a sequence of linear motion commands, one for each pair of consecutive waypoints.
 
+```mermaid
 flowchart LR
     A["G-code"] --> B["gcode_reader()<br/>waypoints P0...PN"]
     B --> C["buildSequenceRequest()<br/>one LIN segment per pair of waypoints"]
@@ -153,6 +156,7 @@ flowchart LR
     style D fill:#D9EAF7,stroke:#5B9BD5,color:#000
     style E fill:#D9EAF7,stroke:#5B9BD5,color:#000
     style F fill:#D9EAF7,stroke:#5B9BD5,color:#000
+```
 
 ### 4.1 Constraints per waypoint
 
