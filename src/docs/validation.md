@@ -1,9 +1,6 @@
 # Experimental Validation
 
-This document collects the preparation steps, the tests carried out on the real UR10 and the results obtained. The main goal of these tests is to **control the robot from ROS 2 without using the Teach Pendant** to run trajectories, and to validate the planning workflow described in [Trajectory Planning](planning.md). For the installation steps see the [Quick start](../../README.md#quick-start), and for common errors see [Troubleshooting](troubleshooting.md).
-
-> [!TIP]
-> All the commands in this document assume that the workspace has been built and sourced, as described in the [Quick start](../../README.md#installation). Each long-running command (driver, MoveIt, planners, loggers) needs its own terminal.
+This document collects the preparation steps, the tests carried out on the real UR10 and the results obtained. The main goal of these tests is to control the robot from ROS 2 without using the Teach Pendant to run trajectories, and to validate the planning workflow described in [Trajectory Planning](planning.md). All the commands in this document assume that the workspace has been built and sourced, as described in the [Quick start](../../README.md#installation). 
 
 ## Overview
 
@@ -22,7 +19,7 @@ This document collects the preparation steps, the tests carried out on the real 
 
 ### 1.1 Test environments
 
-The tests can be run on the real robot or on the URSim simulator. The only difference in the launch commands is the IP address of the robot.
+The tests can be run on the real robot or on the *URSim simulator*. The only difference in the launch commands is the IP address of the robot.
 
 | Environment | `robot_ip` | Notes |
 |-------------|:----------:|-------|
@@ -50,7 +47,7 @@ Go to `Setup Robot → Network` and set the following parameters:
 | Preferred DNS server | `192.168.0.9` |
 | Alternative DNS server | `0.0.0.0` |
 
-In addition, the user name of the computer used has to be added.
+In addition to this, the user name of the computer used has to be added.
 
 **On the PC**
 
@@ -70,7 +67,7 @@ In addition, the user name of the computer used has to be added.
 ping 192.168.0.9
 ```
 
-If the connection is established, the output should be similar to:
+If the connection is established correctly, the output should be similar to:
 
 ```text
 64 bytes from 192.168.0.9: icmp_seq=1 ttl=64 time=0.670 ms
@@ -86,7 +83,7 @@ The startup sequence is always the same:
 
 1. Start the Teach Pendant and the computer.
 2. Check the network connection between the Teach Pendant and the computer with `ping`.
-3. Start the robot and release the brakes from the Teach Pendant.
+3. Start the robot installation and release the brakes from the Teach Pendant.
 4. Launch the ROS driver on the computer.
 5. Check that the robot state is `RUNNING`.
 6. Activate `external_control.urp`.
@@ -112,7 +109,7 @@ Before handing the control to ROS 2, the controllers have to be launched through
 ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur10 robot_ip:=192.168.0.9 launch_rviz:=false
 ```
 
-Once the driver is running, check that the dashboard services are active:
+Once the driver is running, you can check that the dashboard services are active:
 
 ```bash
 ros2 service list | grep dashboard
@@ -137,19 +134,19 @@ ros2 service call /dashboard_client/play std_srvs/srv/Trigger {}
 These tests were designed with four objectives:
 
 - Become familiar with the laboratory work environment.
-- Document the specific connection data between the robot and the PC.
+- Document the especific connection data between the robot and the PC.
 - Make a first contact with the control of the robot from ROS.
 - Diagnose the disconnection timeout of the External Control.
 
 ### 3.1 Writing messages on the Teach Pendant
 
-Add an entry to the log of the robot:
+You can add an entry to the log of the robot:
 
 ```bash
 ros2 service call /dashboard_client/add_to_log ur_dashboard_msgs/srv/AddToLog "{message: 'Message from my PC: hello world'}"
 ```
 
-Show a popup and close it:
+To show a popup and close it:
 
 ```bash
 ros2 service call /dashboard_client/popup ur_dashboard_msgs/srv/Popup "{message: 'Press OK to continue'}"
@@ -158,7 +155,7 @@ ros2 service call /dashboard_client/close_popup std_srvs/srv/Trigger "{}"
 
 ### 3.2 Freedrive
 
-The robot can be moved by hand through the freedrive mode:
+The robot can be moved manually through the freedrive mode:
 
 ```bash
 ros2 topic pub --rate 2 /freedrive_mode_controller/enable_freedrive_mode std_msgs/msg/Bool "{data: true}"
@@ -178,7 +175,7 @@ ros2 service list
 
 ### 3.3 Monitoring the state of the robot
 
-During the tests, the state of the robot should be checked from time to time. A timeout that disconnects the External Control without warning had been reported, and diagnosing it was a secondary objective of these tests, although a very important one. <!-- TODO: add the conclusions of the timeout diagnosis -->
+During the tests, the state of the robot should be checked from time to time. A timeout that disconnects the External Control had been reported, so it's important to check the ROS driver terminal if any warning message. To solve this, yo have to close the ROS driver terminal (Ctrl + C) and re-run the driver and the External Control program. 
 
 **Program state**
 
@@ -258,19 +255,17 @@ This action tries to take the robot to the `RUNNING` mode (7), stops the active 
 
 ### 3.5 Reading positions
 
-To obtain positions or to check trajectories, the state of the robot can be read with the following commands.
+To obtain positions or to check trajectories, the state of the robot can be read with the following commands. The following topic publishes the joint positions of the robot:
 
 ```bash
 ros2 topic echo /joint_states
 ```
 
-This topic publishes the joint positions of the robot.
+This instruction prints the transformation between two reference frames, as a position (Cartesian coordinates) and a unit quaternion:
 
 ```bash
 ros2 run tf2_ros tf2_echo world cama_impresion
 ```
-
-This tool prints the transformation between two reference frames, as a position (Cartesian coordinates) and a unit quaternion.
 
 ---
 
@@ -311,7 +306,7 @@ ros2 run npam_logger commanded_logger
 
 ### 4.2 Data acquisition
 
-The planned and the commanded motions are recorded with timestamps by subscribing to two topics. <!-- TODO: confirm which logger records each topic -->
+The planned and the commanded motions are recorded with timestamps by subscribing to two topics.
 
 | Data | Topic | Message type | Joint quantities |
 |------|-------|--------------|------------------|
@@ -319,9 +314,6 @@ The planned and the commanded motions are recorded with timestamps by subscribin
 | Commanded | `/scaled_joint_trajectory_controller/state` | `control_msgs/msg/JointTrajectoryControllerState` | Positions in rad, velocities in rad/s, accelerations in rad/s² |
 
 ROS messages use SI units (angles in radians), so the joint velocities published by these topics are in **rad/s**. Neither topic publishes mm/s; a Cartesian speed of the TCP would be in m/s, which is also the unit of `max_trans_vel`.
-
-> [!NOTE]
-> The tables and figures of this document state the unit of each magnitude. If a velocity is converted from rad/s to °/s for the analysis, the axis labels must be changed accordingly.
 
 ### 4.3 Useful checks
 
@@ -341,7 +333,7 @@ ros2 run tf2_ros tf2_echo world cama_impresion 2>/dev/null | grep -E "Translatio
 
 ### 4.4 Changing the controller parameters
 
-The tolerance of the trajectory tracking of the `scaled_joint_trajectory_controller` can be modified at runtime. The following command sets it to 5.0 for all the joints: <!-- TODO: explain why it was needed in the tests -->
+The tolerance of the trajectory tracking of the `scaled_joint_trajectory_controller` can be modified at runtime for a more flexible planned path. The following command sets it to 5.0 for all the joints: 
 
 ```bash
 ros2 param set /scaled_joint_trajectory_controller constraints.shoulder_pan_joint.trajectory 5.0 && \
@@ -390,14 +382,20 @@ After running Pilz, the joint velocities should be checked against the limits (s
 
 ## 6. Results
 
-The tests were carried out with a trajectory obtained during the INGENIA course. It is a particularly interesting case because it describes a **continuous surface** and it allows the **dynamic characterization of the joints at the ends** of the kinematic chain. <!-- TODO: indicate the name of the trajectory -->
+The tests were carried out with a trajectory with a **continuous surface** and it allows the **dynamic characterization of the joints at the ends** of the kinematic chain.
+
+<div align="center">
+  <img src="images/trayectoria.jpg" alt="Half-spring trajectory performed during the tests " width="25%">
+  <br>
+  <sub><b>Figure 1.</b> Planned and commanded joint velocity with a velocity scaling of 90 % and an acceleration scaling of 20 %.</sub>
+</div>
 
 ### 6.1 Cartesian interpolation: influence of the scaling
 
 For a single calculated trajectory, the velocity scaling was varied to study its influence on the execution. Figures 1 and 2 compare the planned velocity of a joint, which has a trapezoidal profile, with the commanded velocity recorded during the execution. <!-- TODO: indicate which joint is plotted and the trajectory used -->
 
 <div align="center">
-  <img src="images/cartesian_vel90_acc20.png" alt="Planned and commanded velocity, velocity scaling 90 %, acceleration scaling 20 %" width="90%">
+  <img src="images/New 90-0.2.png" alt="Planned and commanded velocity, velocity scaling 90 %, acceleration scaling 20 %" width="90%">
   <br>
   <sub><b>Figure 1.</b> Planned and commanded joint velocity with a velocity scaling of 90 % and an acceleration scaling of 20 %.</sub>
 </div>
@@ -405,7 +403,7 @@ For a single calculated trajectory, the velocity scaling was varied to study its
 <br>
 
 <div align="center">
-  <img src="images/cartesian_vel25_acc20.png" alt="Planned and commanded velocity, velocity scaling 25 %, acceleration scaling 20 %" width="90%">
+  <img src="images/New 25-0.2.png" alt="Planned and commanded velocity, velocity scaling 25 %, acceleration scaling 20 %" width="90%">
   <br>
   <sub><b>Figure 2.</b> Planned and commanded joint velocity with a velocity scaling of 25 % and an acceleration scaling of 20 %.</sub>
 </div>
@@ -430,17 +428,8 @@ The first step of the Pilz workflow is to estimate the limit of the Cartesian ve
 | Wrist 2 | 0.828 | 120 | 0.69 |
 | **Wrist 3** | **15.876** | 120 | **13.23** |
 
-<!-- TODO: confirm the unit of the velocities in this table (see the units note in section 4.2) -->
 
-The limiting joint is the last one, **`wrist_3`**, which uses 13.23 % of its limit, while the next one (`shoulder_pan`) uses 3.83 %. Figure 3 shows its velocity along the execution.
-
-<div align="center">
-  <img src="images/pilz_wrist3_velocity.png" alt="Velocity of the wrist_3 joint" width="80%">
-  <br>
-  <sub><b>Figure 3.</b> Velocity of the <code>wrist_3</code> joint with <code>max_trans_vel</code> = 0.01 m/s.</sub>
-</div>
-
-<br>
+The limiting joint is the last one, **`wrist_3`**, which uses 13.23 % of its limit, while the next one (`shoulder_pan`) uses 3.83 %. 
 
 **Margin to increase the tangential velocity**
 
