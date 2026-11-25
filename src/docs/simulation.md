@@ -1,8 +1,6 @@
 # Simulation Environment Configuration
 
-## Purpose and Scope
-
-This document describes the modifications implemented in the official Universal Robots ROS 2 packages to adapt the UR10 robot description and MoveIt 2 configuration to the robotic additive manufacturing station developed in this project.
+This document describes the modifications implemented in the official *Universal Robots* ROS 2 packages to adapt the UR10 robot description and MoveIt 2 configuration to the robotic additive manufacturing station developed in this project.
 
 The objective is to document the changes required to reproduce the simulated manufacturing environment, including the robot-especific kinematic parameters, the additional station elements and the semantic configuration used for motion planning.
 
@@ -10,7 +8,7 @@ The objective is to document the changes required to reproduce the simulated man
 
 This document covers four main areas:
 
-1. **Kinematic configuration:** adaptation of the robot model using the calibration data from the laboratory UR10 and modified joint velocity limits.
+1. **Kinematic configuration:** adaptation of the robot model using the calibration data from the real UR10 and modified joint limits.
 2. **URDF description:** integration of the printing bed and the main structural elements of the manufacturing station.
 3. **SRDF configuration:** definition of planning groups, reference configurations and collision-checking rules.
 4. **Environment adaptation:** guidelines for transferring the configuration to another robot or station layout.
@@ -23,7 +21,7 @@ For installation and workspace setup instructions, refer to the [Quick start](..
 
 ## Starting point: Universal Robots ROS 2 Packages
 
-The simulation environment is based on the official ROS 2 packages provided by Universal Robots, using the humble branch as the starting point. These packages provide the robot description, meshes, kinematic parameters and MoveIt 2 configuration required to integrate a UR10 into a ROS 2 application.
+The simulation environment is based on the official ROS 2 packages provided by *Universal Robots*, using the humble branch as the starting point. These packages provide the robot description, meshes, kinematic parameters and MoveIt 2 configuration required to integrate a UR10 into a ROS 2 application.
 
 | Package | Upstream repository | Role |
 |---------|--------------------|------|
@@ -45,29 +43,30 @@ The official [ur_description](https://github.com/UniversalRobots/Universal_Robot
 
 Two modifications were therefore introduced:
 
-- Replacement of the nominal kinematic parameters with the calibration data extracted from the laboratory UR10.
+- Replacement of the nominal kinematic parameters with the calibration data extracted from the real UR10.
 - Reduction of selected joint velocity limits to obtain slower robot trajectories for safer movements.
 
 ### 1.1 Kinematic calibration
 
-Each Universal Robots manipulator is factory-calibrated. The resulting robot-especific kinematic parameters differ slightly from the nominal values used in the generic robot description. The `ur_calibration` package provides a tool to extract these parameters from the robot controller and generate a calibration file.
+Each *Universal Robots* manipulator is factory-calibrated. The resulting robot-especific kinematic parameters differ slightly from the nominal values used in the generic robot description. The `ur_calibration` package provides a tool to extract these parameters from the robot controller and generate a calibration file.
 
 The calibration was obtained using the following command:
 
 ```bash
 ros2 launch ur_calibration calibration_correction.launch.py robot_ip:=192.168.XX.XXX target_filename:="${HOME}/my_robot_calibration.yaml"
 ```
-The extracted values were transferred to [default_kinematics.yaml](../../src/Universal_Robots_ROS2_Description/config/ur10/default_kinematics.yaml), so that the model used by MoveIt (forward and inverse kinematics, and visualization) represents the real robot more faithfully. This improves both the simulation and the planning.
+The extracted values were transferred to [default_kinematics.yaml](../../src/Universal_Robots_ROS2_Description/config/ur10/default_kinematics.yaml), so that the model used by MoveIt (forward and inverse kinematics, and visualization) represents the real robot more faithfully. This improves both the simulation and the planning stages.
  
 The parameters d<sub>1</sub>, a<sub>2</sub>, a<sub>3</sub>, d<sub>4</sub>, d<sub>5</sub> and d<sub>6</sub> are the offsets and link lengths of the D-H model shown in Figure 1a. Figure 1b shows the names of the joints and links of the UR10.
  
 <div align="center">
   <img src="images/DH params.png" alt="D-H frames and joint names of the UR10" width="55%">
   <br>
-  <sub><b>Figure 1.</b> (a) D-H reference frames and parameters of the UR10. (b) Names of its joints and links.</sub> Source: Source: <a href="https://www.researchgate.net/publication/398586997_Extended_Dynamic_Model_for_the_UR16e_6-Degree-of-Freedom_Robotic_Manipulator"> University of Santiago of Chile, 2025</a></sub>
+  <sub><b>Figure 1.</b> (a) D-H reference frames and parameters of the UR10. (b) Names of its joints and links. Source: <a href="https://www.researchgate.net/publication/398586997_Extended_Dynamic_Model_for_the_UR16e_6-Degree-of-Freedom_Robotic_Manipulator"> University of Santiago of Chile, 2025</a></sub></sub> 
 </div>
 <br>
-**Modified parameters**
+
+**Modified parameters:**
 
 | D-H parameter | Field in `.yaml` | Nominal value | Calibrated value | Difference |
 |:---:|:---:|:---:|:---:|:---:|
@@ -92,7 +91,7 @@ The modifications made to the URDF/Xacro description can be visualized using the
 ros2 launch ur_description view_ur.launch.xml ur_type:=ur10
 ```
 
-This command launches the robot model visualization in RViz 2, allowing the updated kinematic structure and the added manufacturing station elements to be inspected. It provides a straightforward way to verify the URDF modifications before integrating the model into the MoveIt 2 planning environment.
+This command launches the robot model visualization in RViz, allowing the updated kinematic structure and the added manufacturing station elements to be inspected. It provides a straightforward way to verify the URDF modifications before integrating the model into the MoveIt 2 planning environment.
 
 <div align="center">
   <img src="images/new srefs.png" alt="Modified model in RViz 2" width="75%">
@@ -132,7 +131,7 @@ Unlike conventional robotic additive manufacturing configurations in which the e
 
 **Implemented modifications**
 
-The printing bed was added as a new link after tool0, connected through a fixed joint. Consequently, its position and orientation are determined by the robot configuration.
+The printing bed was added as a new link after *tool0*, connected through a fixed joint. Consequently, its position and orientation are determined by the robot configuration.
 
 Conversely, the station table and extruder bar were added as elements external to the robot kinematic chain. They are attached to the world reference frame through fixed joints, so their positions remain unchanged when the robot moves.
 
@@ -167,7 +166,7 @@ graph TD
 
 While the URDF defines the robot's geometric and kinematic structure, the SRDF (*Semantic Robot Description Format*) provides additional information required by MoveIt 2 to configure and plan robot motions.
 
-The [SRDF configuration](../../src/Universal_Robots_ROS2_Driver/ur_moveit_config/srdf/ur_macro.srdf.xacro) was adapted in the ur_moveit_config package to account for the new end-effector and the manufacturing station. Three main aspects were modified:
+The [SRDF configuration](../../src/Universal_Robots_ROS2_Driver/ur_moveit_config/srdf/ur_macro.srdf.xacro) was adapted in the `ur_moveit_config` package to account for the new end-effector and the manufacturing station. Three main aspects were modified:
 
 - Planning groups.
 - Predefined reference configurations.
@@ -190,12 +189,12 @@ Several typical joint configurations were stored in the SRDF, such as `HOME`, `U
 
 MoveIt 2 uses the Allowed Collision Matrix (ACM) to determine which pairs of robot links and environment objects must be checked for collisions.
 
-When new elements are added to the URDF, the collision configuration must also be reviewed. Otherwise, the planning scene may report collisions between elements that are expected to be in contact or may perform unnecessary collision checks. The main modifications concerned two types of pairs:
+When new elements are added to the URDF, the collision configuration must also be reviewed. Otherwise, the planning scene may report collisions between elements that are expected to be in contact or may perform unnecessary collision checks (the red robot alerts you that a collision is taking place). The main modifications concerned two types of pairs:
 
-- **Adjacent elements in the kinematic chain:** selected pairs of consecutive links were excluded from collision checking where their geometry or mechanical connection would otherwise produce expected contact or overlapping collision meshes.
+- **Adjacent elements in the kinematic chain:** selected pairs of consecutive links were excluded from collision checking because there is a expected contact that represents no danger for the equipment or the environment.
 - **Elements that can never collide:** pairs of elements whose relative position never changes, such as the station table and the extruder bar, which are both fixed to `world`.
 
-These exclusions reduce unnecessary collision checks and prevent false collision reports during planning.
+These exclusions reduce unnecessary collision checks and make the calculations easier for the trajectory planner.
 
 > [!IMPORTANT]
 > Collision exclusions must be reviewed whenever the URDF or station geometry changes. Only pairs that cannot produce a relevant collision in the intended operating conditions should be disabled. The remaining collision checks are essential to ensure that planned trajectories are valid with respect to the robot and its environment.
@@ -210,6 +209,6 @@ If the repository is used with another robot or another station layout, these ar
 2. Review the joint velocity limits in `joint_limits.yaml`.
 3. Modify the URDF to represent the new elements, as intrinsic (attached to the chain) or extrinsic (attached to `world`).
 4. Update the SRDF: planning groups, reference poses and allowed collision matrix.
-5. Rebuild the workspace and check the result in RViz 2.
+5. Rebuild the workspace and check the result in RViz.
 
 This procedure allows the simulation environment to be extended while maintaining consistency between the robot description, the manufacturing station and the MoveIt 2 planning configuration.
