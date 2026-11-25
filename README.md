@@ -321,12 +321,12 @@ The following documents expand on the main aspects of the project, from the prep
   </tr>
   <tr>
     <td width="360" align="center">
-      <a href="src/docs/testing.md">
+      <a href="src/docs/validation.md">
         <img src="src/docs/images/validation.jpeg" alt="Testing and results" width="360">
       </a>
     </td>
     <td>
-      <b><a href="src/docs/testing.md">3. Testing and results</a></b><br>
+      <b><a href="src/docs/validation.md">3. Testing and results</a></b><br>
       Collects the preparation and the tests carried out to run trajectories from ROS 2 without using the *Teach Pendant*, and analyses the results obtained on the real UR10.
       <ul>
         <li><b>Test setup:</b> real robot and URSim simulator, network configuration and startup sequence.</li>
